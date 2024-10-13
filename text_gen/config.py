@@ -1,5 +1,5 @@
 import torch
-from utils import 
+from main import chars
 
 batch_size = 16
 block_size = 32
@@ -12,7 +12,7 @@ n_embd = 64
 n_head = 4
 n_layer = 4
 dropout = 0
-vocab_size =len(chars) #64 is test value this is the vocab size real value =len(chars) and chars should import from the utils
+vocab_size =len(chars) 
 
 
 torch.manual_seed(1337)
