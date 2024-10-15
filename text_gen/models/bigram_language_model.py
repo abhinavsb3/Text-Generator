@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from ..config import n_embd, n_head, block_size, n_layer, vocab_size, dropout, device
+from config import n_embd, n_head, block_size, n_layer, dropout, device
+
 
 class Head(nn.Module):
 
@@ -18,7 +19,7 @@ class Head(nn.Module):
         k = self.key(x) # (B,T,C)
         q = self.query(x) # (B,T,C)
         # compute attention score
-        wei = q @ k.trannspose(-2,-2)*C**-0.5  # (B, T, C) @ (B, C, T) -> (B, T, T)
+        wei = q @ k.transpose(-2,-1)*C**-0.5  # (B, T, C) @ (B, C, T) -> (B, T, T)
         wei = wei.masked_fill(self.trill[:T, :T] == 0,float('-inf')) # (B, T, T)
         wei = F.softmax(wei, dim=-1)# (B, T, T)
         wei = self.dropout(wei)
@@ -75,13 +76,13 @@ class Block(nn.Module):
 
 class BigramLanguageModel(nn.Module):
 
-    def __init__(self):
+    def __init__(self,vocab_size):
         super().__init__()
         # each token directly reads off the logits for the next token from a lookup table
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
         self.position_embedding_table = nn.Embedding(block_size,n_embd)
         self.blocks = nn.Sequential(*[Block(n_embd, n_head=n_head) for _ in range(n_layer)])
-        self.ln_f = nn.LayerNorm(n_embd, vocab_size)#learn about layer norm
+        self.ln_f = nn.LayerNorm(n_embd)#learn about layer norm
         self.lm_head = nn.Linear(n_embd, vocab_size)
 
     def forward(self, idx, targets=None):
@@ -103,9 +104,9 @@ class BigramLanguageModel(nn.Module):
             targets = targets.view(B*T)
             loss = F.cross_entropy(logits, targets)
         return logits, loss
-    def generate(self, idx, max_new_toknes):
+    def generate(self, idx, max_new_tokens):
         # idx is (B, T) array of indices in the current context
-        for _  in range(max_new_toknes):
+        for _  in range(max_new_tokens):
             # crop idx to the last block_size tokens
             idx_cond = idx[:, -block_size:]
             # get the predictions

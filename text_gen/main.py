@@ -1,5 +1,5 @@
 import torch
-from config import data_path, vocab_size, device
+from config import device
 from data.dataset import load_data
 from models.bigram_language_model import BigramLanguageModel
 from utils import encode, decode, get_batch

@@ -1,5 +1,4 @@
 import torch
-from main import chars
 
 batch_size = 16
 block_size = 32
@@ -12,7 +11,7 @@ n_embd = 64
 n_head = 4
 n_layer = 4
 dropout = 0
-vocab_size =len(chars) 
+# vocab_size =len(chars) 
 
 
 torch.manual_seed(1337)

@@ -3,7 +3,7 @@
 import torch
 from utils import get_batch
 from models.bigram_language_model import BigramLanguageModel
-from config import max_iters, eval_interval, learning_rate, eval_iters, vocab_size, device
+from config import max_iters, eval_interval, learning_rate, eval_iters, device
 from utils import encode, decode
 
 @torch.no_grad()
