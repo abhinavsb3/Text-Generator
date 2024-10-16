@@ -20,7 +20,7 @@ class Head(nn.Module):
         q = self.query(x) # (B,T,C)
         # compute attention score
         wei = q @ k.transpose(-2,-1)*C**-0.5  # (B, T, C) @ (B, C, T) -> (B, T, T)
-        wei = wei.masked_fill(self.trill[:T, :T] == 0,float('-inf')) # (B, T, T)
+        wei = wei.masked_fill(self.tril[:T, :T] == 0,float('-inf')) # (B, T, T)
         wei = F.softmax(wei, dim=-1)# (B, T, T)
         wei = self.dropout(wei)
         # perfortm the weighted aggregation of the values
@@ -32,7 +32,7 @@ class MultiHeadAttention(nn.Module):
 
     def __init__(self, num_heads, head_size):
         super().__init__()
-        self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
+        self.heads = nn.ModuleList([Head(n_embd, head_size) for _ in range(num_heads)])     
         self.proj = nn.Linear(n_embd, n_embd)
         self.dropout = nn.Dropout(dropout)
         
@@ -84,13 +84,19 @@ class BigramLanguageModel(nn.Module):
         self.blocks = nn.Sequential(*[Block(n_embd, n_head=n_head) for _ in range(n_layer)])
         self.ln_f = nn.LayerNorm(n_embd)#learn about layer norm
         self.lm_head = nn.Linear(n_embd, vocab_size)
+        # print(f"vocab_size: {vocab_size}")
+        # print(f"block_size: {block_size}")
 
     def forward(self, idx, targets=None):
         B, T = idx.shape
 
+        # print(f"Shape of idx: {idx.shape}")
+        # print(f"Max index in idx: {idx.max().item()}")  # Convert tensor to a scalar
+        # print(f"Block size: {block_size}")
+
         # idx and targets are both (B,T) tensor of integers
         tok_emb = self.token_embedding_table(idx)
-        pos_emb = self.position_embedding_table(idx)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=device))
         x = tok_emb + pos_emb # (B,T,C)
         x = self.blocks(x) # (B,T,C)
         x = self.ln_f(x) # (B,T,C)
