@@ -25,6 +25,9 @@ def train_model(model, optimizer, train_data, val_data):
         if iter % eval_interval == 0:
             losses = estimate_loss(model, train_data, val_data)
             print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+            if torch.cuda.is_available() and iter % 100 == 0:
+                print("training loop print succesfull")
+                print(torch.cuda.memory_summary()) #chat gpt suggested line
 
         xb, yb = get_batch('train', None, train_data, val_data)
         logits, loss = model(xb, yb)

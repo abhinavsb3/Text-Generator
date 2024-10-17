@@ -1,4 +1,4 @@
-import requests
+import requests 
 
 def load_data(file_path):
     if file_path.startswith('http'):
