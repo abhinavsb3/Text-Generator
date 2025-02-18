@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from config import n_embd, n_head, block_size, n_layer, dropout, device
+from text_gen.config import n_embd, n_head, block_size, n_layer, dropout, device
 
 
 class Head(nn.Module):

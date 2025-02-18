@@ -1,10 +1,10 @@
 # train.py
 
 import torch
-from utils import get_batch
-from models.bigram_language_model import BigramLanguageModel
-from config import max_iters, eval_interval, learning_rate, eval_iters, device
-from utils import encode, decode
+from text_gen.utils import get_batch
+from text_gen.models.bigram_language_model import BigramLanguageModel
+from text_gen.config import max_iters, eval_interval, learning_rate, eval_iters, device
+from text_gen.utils import encode, decode
 
 @torch.no_grad()
 def estimate_loss(model, train_data, val_data):

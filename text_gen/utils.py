@@ -1,5 +1,5 @@
 import torch
-from config import device, batch_size, block_size
+from text_gen.config import device, batch_size, block_size
 
 def encode(text, stoi):
     return [stoi[c] for c in text]
