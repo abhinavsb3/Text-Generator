@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+.vscode/
+*.swp
+txt_gen_env/
+ 
